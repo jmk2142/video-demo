@@ -7,13 +7,15 @@
 
 	<script>
 		var that = this;
+
 		this.mediaRecorder = null;
-		this.muted = true;
 		this.stream = null;
 
+		this.muted = true;
+
 		var mediaConstraints = {
-	    audio: true,    // don't forget audio!
-	    video: true     // don't forget video!
+	    audio: true,
+	    video: true
 		};
 
 		navigator.mediaDevices.getUserMedia(mediaConstraints).then(function(stream){
@@ -22,10 +24,11 @@
 
 			that.mediaRecorder = new MediaStreamRecorder(stream);
 			that.mediaRecorder.mimeType = 'video/webm';
-			window.mediaRecorder = that.mediaRecorder;
+
+			// So we can view it in console easily...
+			// window.mediaRecorder = that.mediaRecorder;
 
 			that.mediaRecorder.ondataavailable = function(blob){
-				console.log('ondataavailable');
 				that.blobURL = URL.createObjectURL(blob);
 				that.update();
 				that.mediaRecorder.save(blob, 'video.webm');
@@ -42,37 +45,10 @@
 		};
 
 		this.stop = function(event){
-			this.mediaRecorder.stop();
 			clearInterval(window.clock);
-			// this.refs.localVideo.muted = false;
+			this.mediaRecorder.stop();
 			this.muted = false;
 		};
-
-		// this.record = function(event){
-		// 	window.clock = setInterval(function(){
-		// 		console.count('seconds');
-		// 	}, 1000);
-		//
-		// 	navigator.mediaDevices.getUserMedia(mediaConstraints)
-		// 		.then(function(stream){
-		// 			that.mediaRecorder = new MediaStreamRecorder(stream);
-		// 			that.mediaRecorder.mimeType = 'video/webm';
-		//
-		// 			that.mediaRecorder.ondataavailable = function(blob){
-		//
-		// 				that.blobURL = URL.createObjectURL(blob);
-		// 				that.update();
-		//
-		// 				// document.write('<a href="' + blobURL + '">' + blobURL + '</a>');
-		// 			};
-		//
-		// 			that.mediaRecorder.start();
-		// 		}).catch(function(error){
-		// 		  console.error('media error', error);
-		// 		});
-		// };
-
-
 
 		this.on('unmount', function(event){
 		  that.mediaRecorder = null;
